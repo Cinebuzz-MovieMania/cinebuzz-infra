@@ -1,0 +1,14 @@
+[Unit]
+Description=Cinebuzz backend
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu
+EnvironmentFile=/etc/cinebuzz.env
+ExecStart=/usr/bin/java -jar /home/ubuntu/app.jar
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
