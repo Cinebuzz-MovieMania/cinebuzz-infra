@@ -7,6 +7,28 @@ Deployment templates for **Cinebuzz** on a single Ubuntu EC2 instance:
 - **Environment** — example variables for `/etc/cinebuzz.env`
 - **`scripts/`** — optional local build helpers when this folder lives inside the **Cinebuzz monorepo** (`../Backend`, `../Frontend`). They are not used on EC2.
 
+## Easy deploy from your Mac (one command)
+
+After **one-time** EC2 setup (Nginx, systemd, `/etc/cinebuzz.env` — sections below):
+
+1. Copy **`env/deploy.env.example`** → **`env/deploy.env`** and edit: `DEPLOY_HOST`, `DEPLOY_USER` (default `ubuntu`), **`DEPLOY_KEY`** (path to your `.pem` on this machine), and **`VITE_API_BASE`** for frontend builds (e.g. `http://YOUR_IP/cinebuzz`). **`deploy.env` is gitignored** — do not commit it.
+
+2. From the monorepo root (parent of `cinebuzz-infra`):
+
+   **Frontend (build + upload + Nginx reload):**
+
+   ```bash
+   ./cinebuzz-infra/scripts/deploy-frontend-ec2.sh
+   ```
+
+   **Backend (Maven + upload + `systemctl restart cinebuzz`):**
+
+   ```bash
+   ./cinebuzz-infra/scripts/deploy-backend-ec2.sh
+   ```
+
+That replaces the long manual `tar` / `scp` / SSH block for routine deploys. Infra files still define **where** files go on the server (`/var/www/cinebuzz-frontend`, `/home/ubuntu/app.jar`); the scripts **ship** new builds there.
+
 This repository contains **no secrets**. Create real values only on the server or in your secret manager.
 
 ## Apply on EC2 (one-time)
