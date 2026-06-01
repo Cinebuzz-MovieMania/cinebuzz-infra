@@ -6,7 +6,7 @@ You only do this when standing up a **new** server (or after wiping one).
 
 - Ubuntu 22.04 / 24.04 EC2 instance (t3.small or above is comfortable).
 - Security group inbound: **22** (your IP), **80** (anywhere), **443** (anywhere if/when you add TLS).
-- An RDS MySQL (or self-hosted) the instance can reach.
+- An RDS MySQL in the **same VPC** as EC2 — see [RDS and DBeaver](rds-and-dbeaver.md).
 - Optional: Elastic IP so the public address doesn’t change on reboot.
 
 SSH in:
@@ -34,6 +34,8 @@ sudo chmod 600 /etc/cinebuzz.env
 ```
 
 The file is a flat list of `KEY=VALUE` lines (DB, JWT, R2, mail, Redis). systemd reads it.
+
+For production RDS, start from [`env/cinebuzz.env.production.example`](../env/cinebuzz.env.production.example) (database name **`cinebuzzdb`**, not `cinebuzz-db`).
 
 ## 3. Install the systemd unit
 

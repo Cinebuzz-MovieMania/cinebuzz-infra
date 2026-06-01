@@ -15,7 +15,7 @@ After **one-time** EC2 setup (Nginx, systemd, `/etc/cinebuzz.env` — sections b
 
 2. From the monorepo root (parent of `cinebuzz-infra`):
 
-   **Frontend (build + upload + Nginx reload):**
+   **Frontend** — see **[docs/frontend-redeploy.md](docs/frontend-redeploy.md)** (EC2 `git pull` when SSH is blocked, or Mac script when SSH works):
 
    ```bash
    ./cinebuzz-infra/scripts/deploy-frontend-ec2.sh
@@ -26,6 +26,14 @@ After **one-time** EC2 setup (Nginx, systemd, `/etc/cinebuzz.env` — sections b
    ```bash
    ./cinebuzz-infra/scripts/deploy-backend-ec2.sh
    ```
+
+   **Nginx config only** (e.g. `client_max_body_size` for poster uploads):
+
+   ```bash
+   ./cinebuzz-infra/scripts/sync-nginx-ec2.sh
+   ```
+
+   **RDS + DBeaver:** [docs/rds-and-dbeaver.md](docs/rds-and-dbeaver.md)
 
 That replaces the long manual `tar` / `scp` / SSH block for routine deploys. Infra files still define **where** files go on the server (`/var/www/cinebuzz-frontend`, `/home/ubuntu/app.jar`); the scripts **ship** new builds there.
 

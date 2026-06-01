@@ -1,13 +1,14 @@
 # Deploy scripts
 
-Two scripts under [`scripts/`](../scripts/) that turn a deploy into one command:
+Scripts under [`scripts/`](../scripts/) for deploy and nginx sync:
 
 | Script | What it ships |
 |--------|---------------|
 | [`deploy-frontend-ec2.sh`](../scripts/deploy-frontend-ec2.sh) | New `dist/` for the SPA |
 | [`deploy-backend-ec2.sh`](../scripts/deploy-backend-ec2.sh) | New JAR for the Spring app |
+| [`sync-nginx-ec2.sh`](../scripts/sync-nginx-ec2.sh) | Push `nginx/cinebuzz.conf` and reload |
 
-Both read configuration from [`env/deploy.env`](../env/deploy.env.example) (gitignored).
+Both deploy scripts read configuration from [`env/deploy.env`](../env/deploy.env.example) (gitignored).
 
 ## 1. One-time: create `env/deploy.env`
 
@@ -19,10 +20,17 @@ cp env/deploy.env.example env/deploy.env
 Edit `env/deploy.env`:
 
 ```bash
-DEPLOY_HOST=ec2-XX-XX-XX-XX.compute-1.amazonaws.com
+DEPLOY_HOST=54.173.215.201
 DEPLOY_USER=ubuntu
-DEPLOY_KEY=/Users/<you>/.ssh/your-key.pem
-VITE_API_BASE=http://<EC2_HOST>/cinebuzz
+DEPLOY_KEY=/Users/<you>/.ssh/cinebuzz-movie.pem
+VITE_API_BASE=http://54.173.215.201/cinebuzz
+```
+
+Use the **public IP** for `DEPLOY_HOST` if office DNS resolves `ec2-*.amazonaws.com` to a proxy.
+
+```bash
+# placeholder if you prefer hostname:
+# DEPLOY_HOST=ec2-XX-XX-XX-XX.compute-1.amazonaws.com
 ```
 
 > `DEPLOY_KEY` must point at the **private** `.pem` on your machine; the file should be `chmod 600`.

@@ -25,9 +25,11 @@ Common deploy and runtime issues, with the fix.
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | Service flaps (`systemctl status` shows restarts) | App crashes on startup | `sudo journalctl -u cinebuzz -n 200 --no-pager` to read logs. |
-| `Unknown database 'cinebuzz'` | Schema not created in MySQL | Create it: `CREATE DATABASE cinebuzz CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;` |
+| `Unknown database 'cinebuzz'` / `cinebuzz-db` | Wrong DB name in JDBC URL or RDS `--db-name` used a hyphen | RDS initial name must be alphanumeric: use **`cinebuzzdb`**. JDBC: `...:3306/cinebuzzdb`. See [rds-and-dbeaver.md](rds-and-dbeaver.md). |
+| DBeaver / SSH tunnel timeout | Office blocks port 22 | Use RDS **public** + **My IP** on RDS SG; DBeaver with SSH off. See [rds-and-dbeaver.md](rds-and-dbeaver.md). |
 | `Illegal base64 character '\n'` for JWT | `JWT_SECRET` has a newline | Re-set `JWT_SECRET` in `/etc/cinebuzz.env` as a single line, restart service. |
 | 500 on `R2` upload | Missing `R2_*` env vars | Fill them in `/etc/cinebuzz.env`, restart service. |
+| **413** on poster/profile upload | Nginx `client_max_body_size` default 1m | Ensure `location /cinebuzz/` has `client_max_body_size 10M;` (see `nginx/cinebuzz.conf`), then `sudo nginx -t && sudo systemctl reload nginx`. |
 | Mail not sending | Wrong `SPRING_MAIL_PASSWORD` (Gmail App Password required) or 2FA off | Fix env, restart service. |
 
 ## Frontend runtime
